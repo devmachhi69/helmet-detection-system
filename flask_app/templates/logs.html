@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="margin-bottom:20px;">Violation Logs</h1>
+
+<div class="card" style="margin-bottom:25px;">
+
+<form method="GET" style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+
+<label><strong>Select Date:</strong></label>
+
+<input type="date"
+       name="date"
+       value="{{ selected_date if selected_date else '' }}"
+       style="padding:6px;">
+
+<button type="submit" class="btn">Search</button>
+
+<a href="/logs" class="btn">Reset</a>
+
+</form>
+
+</div>
+
+
+{% if grouped_data %}
+
+{% for date, rows in grouped_data.items() %}
+
+<div class="card" style="margin-bottom:30px;">
+
+<h2 style="margin-bottom:15px;">
+📅 {{ date }}
+<span style="font-size:16px; color:gray;">
+({{ rows|length }} records)
+</span>
+</h2>
+
+
+<table style="width:100%; border-collapse:collapse;">
+
+<thead>
+<tr style="
+background:#ffffff;
+color:#111827;
+font-weight:600;
+text-align:center;
+border-bottom:2px solid #ddd;
+">
+
+<th style="padding:12px;">Time</th>
+<th style="padding:12px;">Confidence</th>
+<th style="padding:12px;">Image</th>
+<th style="padding:12px;">Download</th>
+
+</tr>
+</thead>
+
+
+<tbody>
+
+{% for row in rows %}
+
+<tr style="
+text-align:center;
+border-bottom:1px solid rgba(238,96,20,0.1);
+color:white;
+">
+
+<td style="padding:12px;">
+{{ row.time }}
+</td>
+
+<td style="padding:12px;">
+{{ row.confidence }}
+</td>
+
+<td style="padding:12px;">
+
+{% if row.image_name %}
+
+<img src="{{ url_for('static', filename='violations/' + row.image_name) }}"
+     width="140"
+     style="border-radius:8px;">
+
+{% else %}
+
+<span style="color:gray;">No Image</span>
+
+{% endif %}
+
+</td>
+
+
+<td style="padding:12px;">
+
+{% if row.image_name %}
+
+<a href="{{ url_for('download', filename=row.image_name) }}"
+   class="btn">
+Download
+</a>
+
+{% else %}
+
+<span style="color:gray;">No File</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="card" style="text-align:center; padding:30px;">
+<h3>No Logs Found</h3>
+<p>Try selecting another date.</p>
+</div>
+
+{% endif %}
+
+{% endblock %}

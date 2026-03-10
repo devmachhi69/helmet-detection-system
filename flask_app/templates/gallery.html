@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Violation Gallery</h1>
+
+<div class="card">
+    <h3>Total Records: {{ count }}</h3>
+</div>
+
+<div style="display:flex; flex-wrap:wrap; gap:20px;">
+{% for img in images %}
+
+<div class="card" style="width:300px;">
+    <img src="{{ url_for('static', filename='violations/' + img.name) }}" width="100%">
+    <p><b>Date:</b> {{ img.date }}</p>
+    <p><b>Time:</b> {{ img.time }}</p>
+    <p><b>Confidence:</b> {{ img.confidence }}</p>
+
+    <a href="/download/{{ img.name }}" class="btn">Download</a>
+    <a href="/delete/{{ img.name }}" class="btn btn-danger">Delete</a>
+</div>
+
+{% endfor %}
+</div>
+
+{% endblock %}

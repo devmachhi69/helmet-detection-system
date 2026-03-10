@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Helmet Detection System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* ================= TOP NAVBAR ================= */
+
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #111827;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .menu-btn {
+            font-size: 22px;
+            cursor: pointer;
+            color: #38bdf8;
+        }
+
+        .system-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #38bdf8;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 220px;
+            height: calc(100vh - 60px);
+            background: #111827;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            text-decoration: none;
+            color: #cbd5e1;
+            border-radius: 6px;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .sidebar a:hover {
+            background: #1e293b;
+            color: #38bdf8;
+        }
+
+        .sidebar.collapsed a span {
+            display: none;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+
+        .main {
+            margin-top: 60px;
+            margin-left: 220px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .main.expanded {
+            margin-left: 70px;
+        }
+
+        /* ================= CARDS ================= */
+
+        .card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        /* ================= BUTTONS ================= */
+
+        .btn {
+            background: #38bdf8;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            display: inline-block;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media screen and (max-width: 768px) {
+
+            .sidebar {
+                position: fixed;
+                left: -220px;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- ======= TOP NAVBAR ======= -->
+    <div class="topbar">
+        <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+        <div class="system-title">Helmet Detection AI Dashboard</div>
+        <div>⚡ Live System</div>
+    </div>
+
+    <!-- ======= SIDEBAR ======= -->
+    <div class="sidebar" id="sidebar">
+        <a href="/">🏠 <span>Dashboard</span></a>
+        <a href="/upload">📤 <span>Upload</span></a>
+        <a href="/gallery">📸 <span>Violations</span></a>
+        <a href="/logs">📋 <span>Logs</span></a>
+        <a href="/logout">🚪 <span>Logout</span></a>
+    </div>
+
+    <!-- ======= MAIN CONTENT ======= -->
+    <div class="main" id="mainContent">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const main = document.getElementById("mainContent");
+
+            sidebar.classList.toggle("collapsed");
+            main.classList.toggle("expanded");
+        }
+    </script>
+
+</body>
+</html>

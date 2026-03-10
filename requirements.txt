@@ -1,0 +1,10 @@
+Flask==3.1.2
+Flask-SQLAlchemy==3.1.1
+opencv-python==4.10.0
+ultralytics==8.3.0
+easyocr==1.7.1
+numpy==2.2.6
+torch
+torchvision
+pillow
+reportlab==4.2.0

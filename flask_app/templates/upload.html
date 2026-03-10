@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="margin-bottom:25px;">Upload Image for Helmet Detection</h1>
+
+<div class="card" style="max-width:800px; margin:auto;">
+
+    <form method="POST" enctype="multipart/form-data" style="text-align:center;">
+
+        <div style="margin-bottom:20px;">
+            <input type="file" name="image" id="imageInput" required>
+        </div>
+
+        <button type="submit" class="btn">
+            🔍 Detect Helmet
+        </button>
+
+    </form>
+
+    {% if result %}
+    <div style="margin-top:40px; text-align:center;">
+        <h3>Detection Result</h3>
+        <img src="{{ url_for('static', filename=result) }}"
+             style="width:100%; max-height:500px; object-fit:contain; border-radius:10px;">
+    </div>
+    {% endif %}
+
+    <div style="margin-top:30px; text-align:center;">
+        <a href="{{ url_for('index') }}" class="btn">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

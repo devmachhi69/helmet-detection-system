@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['with helmet', 'without helmet']
+
+roboflow:
+  workspace: helmetdetection-h4o2o
+  project: helmet-detection-fk6is-rumpr
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/helmetdetection-h4o2o/helmet-detection-fk6is-rumpr/dataset/1

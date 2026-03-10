@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 style="margin-bottom:25px;">Helmet Detection Dashboard</h1>
+
+<!-- ================= STATS ROW ================= -->
+<div style="display:flex; gap:20px; margin-bottom:30px; flex-wrap:wrap;">
+
+    <div class="card" style="flex:1; min-width:200px; text-align:center;">
+        <h3>Total Detections</h3>
+        <h1 id="totalCount" style="color:#3b82f6; font-size:40px;">0</h1>
+    </div>
+
+    <div class="card" style="flex:1; min-width:200px; text-align:center;">
+        <h3>With Helmet</h3>
+        <h1 id="withHelmet" style="color:#22c55e; font-size:40px;">0</h1>
+    </div>
+
+    <div class="card" style="flex:1; min-width:200px; text-align:center;">
+        <h3>Without Helmet</h3>
+        <h1 id="withoutHelmet" style="color:#ef4444; font-size:40px;">0</h1>
+    </div>
+
+    <div class="card" style="flex:1; min-width:200px; text-align:center;">
+        <h3>Compliance Rate (%)</h3>
+        <h1 id="compliance" style="color:#facc15; font-size:40px;">0%</h1>
+    </div>
+
+</div>
+
+<!-- ================= WEBCAM ================= -->
+<!-- ================= WEBCAM ================= -->
+<div class="card" style="margin-top:30px; padding:30px;">
+
+    <h2 style="
+        text-align:center;
+        margin-bottom:20px;
+        font-weight:600;
+        letter-spacing:1px;
+        color:#ffffff;">
+         Live Camera Feed
+    </h2>
+
+    <div style="text-align:center; margin-bottom:20px;">
+
+    <a href="/switch_camera/webcam">
+        <button style="padding:10px 20px; margin-right:10px; background:#3b82f6; color:white; border:none; border-radius:8px; cursor:pointer;">
+            Use Laptop Camera
+        </button>
+    </a>
+
+    <a href="/switch_camera/mobile">
+        <button style="padding:10px 20px; background:#22c55e; color:white; border:none; border-radius:8px; cursor:pointer;">
+            Use Mobile Camera
+        </button>
+    </a>
+
+    </div>
+
+    <div style="display:flex; justify-content:center;">
+        <img src="{{ url_for('video') }}" 
+             style="
+                width:100%;
+                max-width:850px;
+                border-radius:15px;
+                box-shadow:0 8px 25px rgba(0,0,0,0.4);
+             ">
+    </div>
+
+</div>
+
+<!-- ================= CHART ================= -->
+
+<div style="text-align:right; margin-top:15px;">
+    <a href="/download-report" class="btn">
+        📥 Download Full Report (PDF)
+    </a>
+</div> 
+<div class="card" style="margin-top:30px;">
+    <h3>Daily Detection Analytics</h3>
+    <div style="height:350px;">
+        <canvas id="helmetChart"></canvas>
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+let chartInstance = null;
+
+// ---------------- LIVE COUNTER ----------------
+function updateLiveStats() {
+    fetch('/live-count')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('totalCount').innerText = data.total;
+        document.getElementById('withHelmet').innerText = data.with_helmet;
+        document.getElementById('withoutHelmet').innerText = data.without_helmet;
+        document.getElementById('compliance').innerText = data.compliance + "%";
+    });
+}
+
+// ---------------- LOAD / UPDATE CHART ----------------
+
+function loadChart() {
+
+    fetch('/chart-data')
+    .then(response => response.json())
+    .then(data => {
+
+        const ctx = document.getElementById('helmetChart').getContext('2d');
+
+        if (!chartInstance) {
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.dates,
+                    datasets: [
+                        {
+                            label: 'With Helmet',
+                            data: data.with_helmet,
+                            backgroundColor: '#22c55e',
+                            borderRadius: 8,
+                            barPercentage: 0.5,
+                            categoryPercentage: 0.5
+                        },
+                        {
+                            label: 'Without Helmet',
+                            data: data.without_helmet,
+                            backgroundColor: '#ef4444',
+                            borderRadius: 8,
+                            barPercentage: 0.5,
+                            categoryPercentage: 0.5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 800
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ffffff',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#ffffff',
+                                font: {
+                                    size: 13
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255,255,255,0.08)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#ffffff',
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(255,255,255,0.08)'
+                            }
+                        }
+                    }
+                }
+            });
+
+        } else {
+
+            // Update existing chart smoothly
+            chartInstance.data.labels = data.dates;
+            chartInstance.data.datasets[0].data = data.with_helmet;
+            chartInstance.data.datasets[1].data = data.without_helmet;
+            chartInstance.update();
+        }
+
+    })
+    .catch(error => {
+        console.error("Chart Load Error:", error);
+    });
+}
+
+// ---------------- AUTO REFRESH ----------------
+setInterval(() => {
+    updateLiveStats();
+    loadChart();
+}, 5000);
+
+// Initial Load
+updateLiveStats();
+loadChart();
+
+</script>
+
+{% endblock %}
