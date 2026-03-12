@@ -8,3 +8,4 @@ torch
 torchvision
 pillow
 reportlab==4.2.0
+gunicorn
